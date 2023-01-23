@@ -32,6 +32,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
             return (T) bean;
         }
 
+        //XML读取、解析配置文件后将信息存放在beanDefinitionMap
         BeanDefinition beanDefinition = getBeanDefinition(name);
         return (T) createBean(name, beanDefinition, args);
     }

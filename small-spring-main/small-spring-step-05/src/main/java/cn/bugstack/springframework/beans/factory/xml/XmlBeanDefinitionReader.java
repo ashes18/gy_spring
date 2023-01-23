@@ -37,6 +37,11 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
         super(registry, resourceLoader);
     }
 
+    /**
+     * 处理资源加载
+     * @param resource
+     * @throws BeansException
+     */
     @Override
     public void loadBeanDefinitions(Resource resource) throws BeansException {
         try (InputStream inputStream = resource.getInputStream()){
@@ -62,6 +67,15 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
         loadBeanDefinitions(resource);
     }
 
+    /**
+     * 对xml的读取 XmlUtil.readXML(inputStream) 和元素 Element 解析。
+     * 在解析的过程中通过循环操作，以此获取 Bean 配置以及配置中的 id、name、class、value、ref 信息。
+     *
+     * 最终把读取出来的配置信息，创建成 BeanDefinition 以及 PropertyValue，
+     * 最终把完整的 Bean 定义内容注册到 Bean 容器：getRegistry().registerBeanDefinition(beanName, beanDefinition)
+     * @param inputStream
+     * @throws ClassNotFoundException
+     */
     protected void doLoadBeanDefinitions(InputStream inputStream) throws ClassNotFoundException {
         Document doc = XmlUtil.readXML(inputStream);
         Element root = doc.getDocumentElement();
@@ -71,7 +85,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
             // 判断元素
             if (!(childNodes.item(i) instanceof Element)) {
                 continue;
-            }
+             }
             // 判断对象
             if (!"bean".equals(childNodes.item(i).getNodeName())) {
                 continue;
@@ -93,6 +107,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
             // 定义Bean
             BeanDefinition beanDefinition = new BeanDefinition(clazz);
             // 读取属性并填充
+            System.out.println("bean.getChildNodes().getLength(): " + bean.getChildNodes().getLength());
             for (int j = 0; j < bean.getChildNodes().getLength(); j++) {
                 if (!(bean.getChildNodes().item(j) instanceof Element)) {
                     continue;
@@ -111,6 +126,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
                 PropertyValue propertyValue = new PropertyValue(attrName, value);
                 beanDefinition.getPropertyValues().addPropertyValue(propertyValue);
             }
+            //userDao没有ChildNodes，直接注册
             if (getRegistry().containsBeanDefinition(beanName)) {
                 throw new BeansException("Duplicate beanName[" + beanName + "] is not allowed");
             }

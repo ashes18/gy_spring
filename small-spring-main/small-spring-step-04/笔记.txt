@@ -1,0 +1,111 @@
+--01——创建简单的Bean容器
+// 1.初始化 BeanFactory
+BeanFactory beanFactory = new BeanFactory();
+
+// 2.注册 bean
+BeanDefinition beanDefinition = new BeanDefinition(new UserService());
+beanFactory.registerBeanDefinition("userService", beanDefinition);
+
+// 3.获取 bean
+UserService userService = (UserService) beanFactory.getBean("userService");
+userService.queryUserInfo();
+
+定义：BeanDefinition，可能这是你在查阅 Spring 源码时经常看到的一个类，例如它会包括 singleton、prototype、BeanClassName 等。
+但目前我们初步实现会更加简单的处理，只定义一个 Object 类型用于存放对象。
+注册：这个过程就相当于我们把数据存放到 HashMap 中，只不过现在 HashMap 存放的是定义了的 Bean 的对象信息。
+获取：最后就是获取对象，Bean 的名字就是key，Spring 容器初始化好 Bean 以后，就可以直接获取了。
+
+
+-- 02（模板模式）——实现bean的定义、注册、获取
+接口定义了注册，抽象类定义了获取，都集中在 DefaultListableBeanFactory 中的 beanDefinitionMap 里
+
+// 1.初始化 BeanFactory
+DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+
+// 2.注册 bean
+//在 Bean 注册的时候只注册一个类信息，而不会直接把实例化信息注册到 Spring 容器中
+BeanDefinition beanDefinition = new BeanDefinition(UserService.class);
+beanFactory.registerBeanDefinition("userService", beanDefinition);
+
+// 3.第一次获取 bean
+UserService userService = (UserService) beanFactory.getBean("userService");
+userService.queryUserInfo();
+
+// 4.第二次获取 bean from Singleton
+//检验当前单例对象在容器中是否已经缓存起来
+UserService userService_singleton = (UserService) beanFactory.getSingleton("userService");
+userService_singleton.queryUserInfo();
+
+public Object getBean(String name) throws BeansException {
+    //继承了 DefaultSingletonBeanRegistry，也就具备了使用单例注册类方法
+    //先看缓存有没有
+    Object bean = getSingleton(name);
+    if (bean != null) {
+        return bean;
+    }
+
+    //获取不到时需要拿到 Bean 的定义做相应 Bean 实例化操作
+    //getBean 并没有自身的去实现这些方法，而是只定义了调用过程以及提供了抽象方法，由实现此抽象类的其他类做相应实现
+    BeanDefinition beanDefinition = getBeanDefinition(name);
+    return createBean(name, beanDefinition);
+}
+
+protected Object createBean(String beanName, BeanDefinition beanDefinition) throws BeansException {
+    Object bean;
+    try {
+        //实现了 Bean 的实例化操作 newInstance，其实这块会埋下一个坑，有构造函数入参的对象怎么处理？可以提前思考
+        bean = beanDefinition.getBeanClass().newInstance();
+    } catch (InstantiationException | IllegalAccessException e) {
+        throw new BeansException("Instantiation of bean failed", e);
+    }
+
+    //在处理完 Bean 对象的实例化后，直接调用 addSingleton 方法存放到单例对象的缓存中去
+    addSingleton(beanName, bean);
+    return bean;
+}
+
+--03（策略模式）——基于Cglib实现含构造函数的类实例化策略
+
+protected Object createBeanInstance(BeanDefinition beanDefinition, String beanName, Object[] args) {
+    Constructor constructorToUse = null;
+    Class<?> beanClass = beanDefinition.getBeanClass();
+    Constructor<?>[] declaredConstructors = beanClass.getDeclaredConstructors();
+    for (Constructor ctor : declaredConstructors) {
+        if (null != args && ctor.getParameterTypes().length == args.length) {
+            constructorToUse = ctor;
+            break;
+        }
+    }
+    //策略模式，基于Cglib实现含构造函数的类实例化策略
+    return getInstantiationStrategy().instantiate(beanDefinition, beanName, constructorToUse, args);
+}
+
+
+--04(递归、考虑循环依赖怎么解决)——注入属性和依赖对象
+protected void applyPropertyValues(String beanName, Object bean, BeanDefinition beanDefinition) {
+        try {
+            PropertyValues propertyValues = beanDefinition.getPropertyValues();
+            for (PropertyValue propertyValue : propertyValues.getPropertyValues()) {
+
+                String name = propertyValue.getName();
+                Object value = propertyValue.getValue();
+
+                if (value instanceof BeanReference) {
+                    // A 依赖 B，获取 B 的实例化
+                    BeanReference beanReference = (BeanReference) value;
+                    /*
+                    1、初始化 BeanFactory、2. UserDao 定义注册、3. UserService 设置属性[uId、userDao]、4、serService 注入bean（定义并注册）
+                    5、beanFactory.getBean("userService")
+                    (1)缓存没有、获取定义，创建bean
+                   （2）基于Cglib实现含构造函数的类实例化策略（实例化）
+                   （3）给 Bean 填充属性（a、属性填充(uId)b、引用属性填充（getBean("userDao")））
+                    */
+                    value = getBean(beanReference.getBeanName());
+                }
+                // 属性填充
+                BeanUtil.setFieldValue(bean, name, value);
+            }
+        } catch (Exception e) {
+            throw new BeansException("Error setting property values：" + beanName);
+        }
+}
