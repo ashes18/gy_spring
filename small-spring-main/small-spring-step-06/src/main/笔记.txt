@@ -1,0 +1,29 @@
+-- 实现应用上下文
+
+// 1.初始化 BeanFactory
+DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+
+// 2. 读取配置文件&注册Bean
+XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(beanFactory);
+//处理资源加载，这里新增加了一个内部方法：doLoadBeanDefinitions，它主要负责解析 xml
+//在 doLoadBeanDefinitions 方法中，主要是对xml的读取 XmlUtil.readXML(inputStream) 和元素 Element 解析。在解析的过程中通过循环操作，以此获取 Bean 配置以及配置中的 id、name、class、value、ref 信息。
+//最终把读取出来的配置信息，创建成 BeanDefinition 以及 PropertyValue，最终把完整的 Bean 定义内容注册到 Bean 容器：getRegistry().registerBeanDefinition(beanName, beanDefinition)
+reader.loadBeanDefinitions("classpath:spring.xml");
+
+// 3. 获取Bean对象调用方法
+UserService userService = beanFactory.getBean("userService", UserService.class);
+
+AbstractAutowireCapableBeanFactory.createBean
+//实例化（定义）bean
+bean = createBeanInstance(beanDefinition, beanName, args);
+// 给 Bean 填充属性
+applyPropertyValues(beanName, bean, beanDefinition);
+    if (value instanceof BeanReference) {
+    // A 依赖 B，获取 B 的实例化
+    BeanReference beanReference = (BeanReference) value;
+    //再去getB的bean
+    value = getBean(beanReference.getBeanName());
+
+//存放到单例对象的缓存中
+addSingleton(beanName, bean);
+                    }
