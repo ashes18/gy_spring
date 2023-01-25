@@ -158,6 +158,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
         return getBeanFactory().containsBean(name);
     }
 
+    /**
+     * 在一些中间件和监控系统的设计中也可以用得到，比如监测服务器宕机，执行备机启动操作。
+     */
     @Override
     public void registerShutdownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(this::close));

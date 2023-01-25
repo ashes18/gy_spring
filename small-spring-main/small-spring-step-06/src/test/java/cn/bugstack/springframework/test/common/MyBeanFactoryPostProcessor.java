@@ -7,6 +7,10 @@ import cn.bugstack.springframework.beans.factory.ConfigurableListableBeanFactory
 import cn.bugstack.springframework.beans.factory.config.BeanDefinition;
 import cn.bugstack.springframework.beans.factory.config.BeanFactoryPostProcessor;
 
+/**
+ * 对实例化过程中的 Bean 对象做一些操作。
+ * company改为: 字节跳动
+ */
 public class MyBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
 
     @Override

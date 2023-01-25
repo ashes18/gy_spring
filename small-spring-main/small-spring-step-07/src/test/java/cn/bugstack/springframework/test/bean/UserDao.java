@@ -7,6 +7,10 @@ public class UserDao {
 
     private static Map<String, String> hashMap = new HashMap<>();
 
+    /**
+     *
+     * 修改了之前使用 static 静态块初始化数据的方式，改为提供 initDataMethod 和 destroyDataMethod 两个更优雅的操作方式进行处理。
+     */
     public void initDataMethod(){
         System.out.println("执行：init-method");
         hashMap.put("10001", "小傅哥");

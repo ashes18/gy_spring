@@ -13,10 +13,12 @@ import java.lang.reflect.Method;
  * <p>
  *
  *
+ * 适配器的类：销毁方法有两种甚至多种方式，目前有实现接口 DisposableBean、配置信息 destroy-method，两种方式。
+ * 而这两种方式的销毁动作是由 AbstractApplicationContext 在注册虚拟机钩子后看，虚拟机关闭前执行的操作动作。
  *
+ * 那么在销毁执行时不太希望还得关注都销毁那些类型的方法，它的使用上更希望是有一个统一的接口进行销毁，所以这里就新增了适配类，做统一处理
  *
- *
- * 作者：DerekYRC https://github.com/DerekYRC/mini-spring
+ * @author HASEE
  */
 public class DisposableBeanAdapter implements DisposableBean {
 

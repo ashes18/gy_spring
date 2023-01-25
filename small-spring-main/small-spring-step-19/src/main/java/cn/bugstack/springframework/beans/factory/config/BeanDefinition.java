@@ -9,20 +9,37 @@ import cn.bugstack.springframework.beans.PropertyValues;
  *
  * 来自于对开源项目的学习；
  * 作者：DerekYRC https://github.com/DerekYRC/mini-spring
+ * @author HASEE
  */
 public class BeanDefinition {
 
+    /**
+     * singleton
+     */
     String SCOPE_SINGLETON = ConfigurableBeanFactory.SCOPE_SINGLETON;
 
+    /**
+     * prototype
+     */
     String SCOPE_PROTOTYPE = ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 
     private Class beanClass;
 
     private PropertyValues propertyValues;
 
+    /**
+     * 初始化
+     */
     private String initMethodName;
 
+    /**
+     * 销毁
+     */
     private String destroyMethodName;
+
+    /*在 BeanDefinition 新增加了两个属性：initMethodName、destroyMethodName，这两个属性是为了在 spring.xml 配置的 Bean 对象中，
+    可以配置 init-method="initDataMethod" destroy-method="destroyDataMethod" 操作，最终实现接口的效果是一样的。
+    只不过一个是接口方法的直接调用，另外是一个在配置文件中读取到方法反射调用*/
 
     private String scope = SCOPE_SINGLETON;
 

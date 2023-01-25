@@ -13,12 +13,18 @@ public class ApiTest {
     public void test_xml() {
         // 1.初始化 BeanFactory
         ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
+        //注册钩子的动作
         applicationContext.registerShutdownHook();
 
         // 2. 获取Bean对象调用方法
         UserService userService = applicationContext.getBean("userService", UserService.class);
         String result = userService.queryUserInfo();
         System.out.println("测试结果：" + result);
+
+        /*  执行：init-method
+            执行：UserService.afterPropertiesSet
+            测试结果：小傅哥,腾讯,深圳
+         */
     }
 
     @Test

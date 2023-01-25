@@ -10,10 +10,7 @@ import cn.bugstack.springframework.beans.BeansException;
  *
  *
  *
- *
- *
- *
- * 作者：DerekYRC https://github.com/DerekYRC/mini-spring
+ * @author HASEE
  */
 public interface ConfigurableApplicationContext extends ApplicationContext {
 
@@ -23,9 +20,14 @@ public interface ConfigurableApplicationContext extends ApplicationContext {
      * @throws BeansException
      */
     void refresh() throws BeansException;
-
+    /**
+     * 虚拟机关闭钩子注册调用销毁方法
+     */
     void registerShutdownHook();
 
+    /**
+     * 手动关闭
+     */
     void close();
 
 }

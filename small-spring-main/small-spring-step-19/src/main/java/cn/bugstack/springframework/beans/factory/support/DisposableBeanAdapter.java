@@ -11,12 +11,11 @@ import java.lang.reflect.Method;
  * Adapter that implements the {@link DisposableBean} and {@link Runnable} interfaces
  * performing various destruction steps on a given bean instance:
  * <p>
- * 博客：https://bugstack.cn - 沉淀、分享、成长，让自己和他人都能有所收获！
- * 公众号：bugstack虫洞栈
- * Create by 小傅哥(fustack)
- *
+ * 适配器的类：销毁方法有两种甚至多种方式，目前有实现接口 DisposableBean、配置信息 destroy-method，两种方式。
+ * 而这两种方式的销毁动作是由 AbstractApplicationContext 在注册虚拟机钩子后看，虚拟机关闭前执行的操作动作。
  * 来自于对开源项目的学习；
  * 作者：DerekYRC https://github.com/DerekYRC/mini-spring
+ * @author HASEE
  */
 public class DisposableBeanAdapter implements DisposableBean {
 

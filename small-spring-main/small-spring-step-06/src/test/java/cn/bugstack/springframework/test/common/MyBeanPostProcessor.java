@@ -4,6 +4,10 @@ import cn.bugstack.springframework.beans.BeansException;
 import cn.bugstack.springframework.beans.factory.config.BeanPostProcessor;
 import cn.bugstack.springframework.test.bean.UserService;
 
+/**
+ * bean扩展
+ * location改为：北京
+ */
 public class MyBeanPostProcessor implements BeanPostProcessor {
 
     @Override

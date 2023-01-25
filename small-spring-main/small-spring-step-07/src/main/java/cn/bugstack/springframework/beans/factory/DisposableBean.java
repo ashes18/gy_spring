@@ -8,13 +8,14 @@ package cn.bugstack.springframework.beans.factory;
  *
  *
  *
- *
- *
- *
- * 作者：DerekYRC https://github.com/DerekYRC/mini-spring
+ * @author HASEE
  */
 public interface DisposableBean {
 
+    /**
+     * 销毁操作
+     * @throws Exception
+     */
     void destroy() throws Exception;
 
 }

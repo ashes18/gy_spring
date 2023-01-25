@@ -38,6 +38,8 @@ public class ApiTest {
 
     @Test
     public void test_xml() {
+        //test_BeanFactoryPostProcessorAndBeanPostProcessor
+        //第一个单元测试的1、2步骤合并(3、 4)
         // 1.初始化 BeanFactory
         ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:springPostProcessor.xml");
 

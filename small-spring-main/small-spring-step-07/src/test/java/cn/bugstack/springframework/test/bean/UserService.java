@@ -4,9 +4,10 @@ import cn.bugstack.springframework.beans.factory.DisposableBean;
 import cn.bugstack.springframework.beans.factory.InitializingBean;
 
 /**
+ * InitializingBean, DisposableBean实现这两个接口，就可以执行初始化、销毁操作
  * 作者：DerekYRC https://github.com/DerekYRC/mini-spring
  */
-public class UserService implements InitializingBean, DisposableBean {
+public class  UserService implements InitializingBean, DisposableBean {
 
     private String uId;
     private String company;

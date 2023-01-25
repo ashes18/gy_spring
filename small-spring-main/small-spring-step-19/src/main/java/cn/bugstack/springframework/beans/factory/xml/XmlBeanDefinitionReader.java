@@ -28,6 +28,7 @@ import java.util.List;
  *
  * 来自于对开源项目的学习；
  * 作者：DerekYRC https://github.com/DerekYRC/mini-spring
+ * @author HASEE
  */
 public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 
@@ -71,6 +72,11 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
         }
     }
 
+    /**
+     * @param inputStream
+     * @throws ClassNotFoundException
+     * @throws DocumentException
+     */
     protected void doLoadBeanDefinitions(InputStream inputStream) throws ClassNotFoundException, DocumentException {
         SAXReader reader = new SAXReader();
         Document document = reader.read(inputStream);
@@ -92,6 +98,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
             String id = bean.attributeValue("id");
             String name = bean.attributeValue("name");
             String className = bean.attributeValue("class");
+            //doLoadBeanDefinitions中增加对init-method、destroy-method的读取q
             String initMethod = bean.attributeValue("init-method");
             String destroyMethodName = bean.attributeValue("destroy-method");
             String beanScope = bean.attributeValue("scope");
@@ -106,6 +113,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 
             // 定义Bean
             BeanDefinition beanDefinition = new BeanDefinition(clazz);
+            //额外设置到beanDefinition中
             beanDefinition.setInitMethodName(initMethod);
             beanDefinition.setDestroyMethodName(destroyMethodName);
 

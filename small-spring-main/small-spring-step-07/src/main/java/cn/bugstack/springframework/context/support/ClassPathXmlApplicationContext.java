@@ -16,6 +16,7 @@ import cn.bugstack.springframework.beans.BeansException;
  *
  *
  * 作者：DerekYRC https://github.com/DerekYRC/mini-spring
+ * @author HASEE
  */
 public class ClassPathXmlApplicationContext extends AbstractXmlApplicationContext {
 

@@ -8,12 +8,9 @@ import cn.bugstack.springframework.beans.BeansException;
  * to the application context client methods in the
  * {@link cn.bugstack.springframework.context.ApplicationContext} interface.
  *
- * 博客：https://bugstack.cn - 沉淀、分享、成长，让自己和他人都能有所收获！
- * 公众号：bugstack虫洞栈
- * Create by 小傅哥(fustack)
- *
  * 来自于对开源项目的学习；
  * 作者：DerekYRC https://github.com/DerekYRC/mini-spring
+ * @author HASEE
  */
 public interface ConfigurableApplicationContext extends ApplicationContext {
 
@@ -24,8 +21,14 @@ public interface ConfigurableApplicationContext extends ApplicationContext {
      */
     void refresh() throws BeansException;
 
+    /**
+     * 虚拟机关闭钩子注册调用销毁方法
+     */
     void registerShutdownHook();
 
+    /**
+     * 手动关闭
+     */
     void close();
 
 }

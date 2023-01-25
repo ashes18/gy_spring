@@ -41,6 +41,7 @@ public class ClassPathXmlApplicationContext extends AbstractXmlApplicationContex
      * @throws BeansException
      */
     public ClassPathXmlApplicationContext(String[] configLocations) throws BeansException {
+        //configLocations是classpath:springPostProcessor.xml
         this.configLocations = configLocations;
         refresh();
     }

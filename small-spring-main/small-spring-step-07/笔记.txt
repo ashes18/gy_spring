@@ -180,3 +180,57 @@ ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationC
 UserService userService = applicationContext.getBean("userService", UserService.class);
 String result = userService.queryUserInfo();
 System.out.println("测试结果：" + result);
+
+
+
+--07——初始化和销毁方法
+对于这样在 Bean 容器初始化过程中额外添加的处理操作，无非就是预先执行了一个定义好的接口方法或者是反射调用类中xml中配置的方法，
+最终你只要按照接口定义实现，就会有 Spring 容器在处理的过程中进行调用而已。
+(目前这个 Spring 框架对 Bean 的操作越来越完善了，可扩展性也不断的增强。你既可以在Bean注册完成实例化前进行 BeanFactoryPostProcessor 操作，
+也可以在Bean实例化过程中执行前置和后置操作，现在又可以执行Bean的初始化方法和销毁方法。所以一个简单的Bean对象，已经被赋予了各种扩展能力。)
+
+@Test
+public void test_xml() {
+    // 1.初始化 BeanFactory
+    ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
+    //注册钩子的动作
+    applicationContext.registerShutdownHook();
+
+    // 2. 获取Bean对象调用方法
+    UserService userService = applicationContext.getBean("userService", UserService.class);
+    String result = userService.queryUserInfo();
+    System.out.println("测试结果：" + result);
+}
+
+doLoadBeanDefinitions方法Bean属性定义增加初始化和销毁后，还需要在XmlBeanDefinitionReader类中，增加对新增属性的读取，并添加到BeanDefinition中
+String initMethod = bean.getAttribute("init-method");
+String destroyMethodName = bean.getAttribute("destroy-method");
+
+beanDefinition.setInitMethodName(initMethod);
+beanDefinition.setDestroyMethodName(destroyMethodName);
+
+applicationContext.getBean("userService", UserService.class);
+getBean先从缓存拿，没有就createBean（1、实例化bean 2、给 Bean 填充属性 3、执行 Bean 的初始化方法和 BeanPostProcessor 的前置和后置处理方法）
+上述3是执行initializeBean方法，包括：
+1、执行 BeanPostProcessor Before 处理
+2、执行 执行 Bean 对象的初始化方法(invokeInitMethods)
+3、执行 执行 BeanPostProcessor After 处理
+
+private void invokeInitMethods(String beanName, Object bean, BeanDefinition beanDefinition) throws Exception {
+        // 1. 实现接口 InitializingBean
+        if (bean instanceof InitializingBean) {
+            //在 BeanFactory 设置属性后作出相应的处理，如：执行自定义初始化，或者仅仅检查是否设置了所有强制属性。
+            ((InitializingBean) bean).afterPropertiesSet();
+        }
+
+        // 2. 注解配置 init-method {判断是为了避免二次执行初始化}
+        String initMethodName = beanDefinition.getInitMethodName();
+        if (StrUtil.isNotEmpty(initMethodName) && !(bean instanceof InitializingBean)) {
+            Method initMethod = beanDefinition.getBeanClass().getMethod(initMethodName);
+            if (null == initMethod) {
+                throw new BeansException("Could not find an init method named '" + initMethodName + "' on bean with name '" + beanName + "'");
+            }
+            //执行反射调用
+            initMethod.invoke(bean);
+        }
+}

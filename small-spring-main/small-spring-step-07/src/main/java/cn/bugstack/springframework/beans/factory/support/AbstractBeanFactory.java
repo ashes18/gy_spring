@@ -44,8 +44,22 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
         return (T) createBean(name, beanDefinition, args);
     }
 
+    /**
+     * 使用Bean名称查询BeanDefinition
+     * @param beanName
+     * @return BeanDefinition
+     * @throws BeansException
+     */
     protected abstract BeanDefinition getBeanDefinition(String beanName) throws BeansException;
 
+    /**
+     * 用来创建 Bean 对象
+     * @param beanName
+     * @param beanDefinition
+     * @param args
+     * @return
+     * @throws BeansException
+     */
     protected abstract Object createBean(String beanName, BeanDefinition beanDefinition, Object[] args) throws BeansException;
 
     @Override
