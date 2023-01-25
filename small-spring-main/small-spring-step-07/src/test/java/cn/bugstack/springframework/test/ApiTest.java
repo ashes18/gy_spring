@@ -13,7 +13,7 @@ public class ApiTest {
     public void test_xml() {
         // 1.初始化 BeanFactory
         ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
-        //注册钩子的动作
+        //注册钩子的动作（注册销毁逻辑）
         applicationContext.registerShutdownHook();
 
         // 2. 获取Bean对象调用方法

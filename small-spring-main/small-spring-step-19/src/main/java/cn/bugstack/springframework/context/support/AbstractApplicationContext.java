@@ -160,6 +160,17 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
 
     /**
      * 在一些中间件和监控系统的设计中也可以用得到，比如监测服务器宕机，执行备机启动操作。
+     * JDK提供了Java.Runtime.addShutdownHook(Thread hook)方法，可以注册一个JVM关闭的钩子，这个钩子可以在一下几种场景中被调用：
+     *
+     * 程序正常退出
+     * 使用System.exit()
+     * 终端使用Ctrl+C触发的中断
+     * 系统关闭
+     * OutOfMemory宕机
+     * 使用Kill pid命令干掉进程（注：在使用kill -9 pid时，是不会被调用的）
+     * ————————————————
+     * 版权声明：本文为CSDN博主「请叫我大师兄_」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+     * 原文链接：https://blog.csdn.net/qq_27093465/article/details/107381143
      */
     @Override
     public void registerShutdownHook() {

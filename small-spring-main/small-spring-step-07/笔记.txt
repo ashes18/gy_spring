@@ -234,3 +234,36 @@ private void invokeInitMethods(String beanName, Object bean, BeanDefinition bean
             initMethod.invoke(bean);
         }
 }
+
+
+
+销毁适配类（DisposableBeanAdapter）
+ @Override
+    public void destroy() throws Exception {
+        // 1. 实现接口 DisposableBean
+        if (bean instanceof DisposableBean) {
+            ((DisposableBean) bean).destroy();
+        }
+
+        // 2. 注解配置 destroy-method {判断是为了避免二次执行销毁}
+        if (StrUtil.isNotEmpty(destroyMethodName) && !(bean instanceof DisposableBean && "destroy".equals(this.destroyMethodName))) {
+            Method destroyMethod = bean.getClass().getMethod(destroyMethodName);
+            if (null == destroyMethod) {
+                throw new BeansException("Couldn't find a destroy method named '" + destroyMethodName + "' on bean with name '" + beanName + "'");
+            }
+            destroyMethod.invoke(bean);
+        }
+
+    }
+ JDK提供了Java.Runtime.addShutdownHook(Thread hook)方法，可以注册一个JVM关闭的钩子，这个钩子可以在一下几种场景中被调用：
+
+ 程序正常退出
+ 使用System.exit()
+ 终端使用Ctrl+C触发的中断
+ 系统关闭
+ OutOfMemory宕机
+ 使用Kill pid命令干掉进程（注：在使用kill -9 pid时，是不会被调用的）
+
+
+
+

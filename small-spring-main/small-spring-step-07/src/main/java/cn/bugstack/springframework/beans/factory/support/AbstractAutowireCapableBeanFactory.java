@@ -67,7 +67,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
      * 那么这个销毁方法的具体方法信息，会被注册到 DefaultSingletonBeanRegistry 中新增加的 Map<String, DisposableBean> disposableBeans 属性中去，
      * 因为这个接口的方法最终可以被类 AbstractApplicationContext 的 close 方法通过 getBeanFactory().destroySingletons() 调用
      *
-     * 在注册销毁方法的时候，会根据是接口类型和配置类型统一交给 DisposableBeanAdapter 销毁适配器类来做统一处理。实现了某个接口的类可以被 instanceof 判断或者强转后调用接口方法
+     * 在注册销毁方法的时候，会根据是接口类型和配置类型统一交给 DisposableBeanAdapter 销毁适配器类来做统一处理。
+     * 实现了某个接口的类可以被 instanceof 判断或者强转后调用接口方法
      * #7. 虚拟机关闭钩子注册调用销毁方法
      * @param beanName
      * @param bean
